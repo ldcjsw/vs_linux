@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="lib">
+      <UniqueIdentifier>{c3aafb57-c6e4-4536-9684-e9db206cd6e5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\libmysqlclient.so">
+      <Filter>lib</Filter>
+    </Library>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MyThread.h" />
+    <ClInclude Include="MyEventTimer.h" />
+    <ClInclude Include="MyEventAcceptor.h" />
+    <ClInclude Include="MyEventWorker.h" />
+    <ClInclude Include="share.h" />
+    <ClInclude Include="ServerConntrol.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="MyThread.cpp" />
+    <ClCompile Include="MyEventTimer.cpp" />
+    <ClCompile Include="MyEventAcceptor.cpp" />
+    <ClCompile Include="MyEventWorker.cpp" />
+    <ClCompile Include="ServerConntrol.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+</Project>
