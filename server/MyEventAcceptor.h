@@ -12,7 +12,7 @@
 #include <iostream>
 
 #include "MyThread.h"
-#include "MyEventWorker.h"
+#include "MyEventMultiplexor.h"
 #include <vector>
 
 using std::vector;
@@ -26,7 +26,7 @@ namespace GG {
 		~MyEventAcceptor();
 
 		int MyEventInit();
-		void SetEventWorks(vector<MyEventWorker*>);
+		void SetEventWorks(vector<MyEventMultiplexor*>);
 
 	protected:
 		virtual void run();
@@ -36,14 +36,14 @@ namespace GG {
 		int setnonblock(int fd);
 		int setClientSocket();
 		int eventLoop();
-		MyEventWorker* getOneEventWork();
+		MyEventMultiplexor* getOneEventWork();
 		static void accept_callback(int fd, short ev, void *arg);
 
 	private:
 		struct event_base* m_event_base;
 		struct event m_accept_event;
 		int m_socket_listen;
-		vector<MyEventWorker*> m_works;
+		vector<MyEventMultiplexor*> m_works;
 		size_t m_worksLoopFlag;
 	};
 }

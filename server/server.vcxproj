@@ -77,8 +77,8 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyEventAcceptor.cpp" />
+    <ClCompile Include="MyEventMultiplexor.cpp" />
     <ClCompile Include="MyEventTimer.cpp" />
-    <ClCompile Include="MyEventWorker.cpp" />
     <ClCompile Include="MyThread.cpp" />
     <ClCompile Include="ServerConntrol.cpp" />
   </ItemGroup>
@@ -87,8 +87,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MyEventAcceptor.h" />
+    <ClInclude Include="MyEventMultiplexor.h" />
     <ClInclude Include="MyEventTimer.h" />
-    <ClInclude Include="MyEventWorker.h" />
     <ClInclude Include="MyThread.h" />
     <ClInclude Include="ServerConntrol.h" />
     <ClInclude Include="share.h" />

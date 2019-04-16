@@ -14,16 +14,16 @@
     <ClInclude Include="MyThread.h" />
     <ClInclude Include="MyEventTimer.h" />
     <ClInclude Include="MyEventAcceptor.h" />
-    <ClInclude Include="MyEventWorker.h" />
     <ClInclude Include="share.h" />
     <ClInclude Include="ServerConntrol.h" />
+    <ClInclude Include="MyEventMultiplexor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyThread.cpp" />
     <ClCompile Include="MyEventTimer.cpp" />
     <ClCompile Include="MyEventAcceptor.cpp" />
-    <ClCompile Include="MyEventWorker.cpp" />
     <ClCompile Include="ServerConntrol.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MyEventMultiplexor.cpp" />
   </ItemGroup>
 </Project>

@@ -20,12 +20,12 @@ using std::list;
 using std::unordered_map;
 
 namespace GG {
-	class MyEventWorker :
+	class MyEventMultiplexor :
 		public MyThread
 	{
 	public:
-		MyEventWorker();
-		~MyEventWorker();
+		MyEventMultiplexor();
+		~MyEventMultiplexor();
 
 		int MyEventInit();
 		void addEvent(Client* pClient);

@@ -35,10 +35,10 @@ void testEvent()
 	pTimeEvent->MyEventInit();
 	pTimeEvent->start();
 
-	vector<MyEventWorker*> m_works;
+	vector<MyEventMultiplexor*> m_works;
 	for (int i = 0; i < 2; i++)
 	{
-		auto pWorker = new MyEventWorker();
+		auto pWorker = new MyEventMultiplexor();
 		pWorker->SetWorkId(i);
 		pWorker->SetEventTimer(pTimeEvent);
 		m_works.push_back(pWorker);

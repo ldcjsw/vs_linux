@@ -30,12 +30,12 @@ int MyEventAcceptor::MyEventInit()
 	return 0;
 }
 
-void MyEventAcceptor::SetEventWorks(vector<MyEventWorker*> works)
+void MyEventAcceptor::SetEventWorks(vector<MyEventMultiplexor*> works)
 {
 	m_works = works;
 }
 
-MyEventWorker* MyEventAcceptor::getOneEventWork()
+MyEventMultiplexor* MyEventAcceptor::getOneEventWork()
 {
 	if (m_worksLoopFlag >= m_works.size())
 	{

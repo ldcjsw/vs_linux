@@ -1,21 +1,21 @@
-#include "MyEventWorker.h"
+#include "MyEventMultiplexor.h"
 #include <iostream>
 
 using namespace GG;
 using std::cout;
 using std::endl;
 
-MyEventWorker::MyEventWorker()
+MyEventMultiplexor::MyEventMultiplexor()
 {
 }
 
 
-MyEventWorker::~MyEventWorker()
+MyEventMultiplexor::~MyEventMultiplexor()
 {
 }
 
 
-int MyEventWorker::MyEventInit()
+int MyEventMultiplexor::MyEventInit()
 {
 	m_event_base = event_base_new();
 
@@ -40,38 +40,38 @@ int MyEventWorker::MyEventInit()
 	return 0;
 }
 
-void MyEventWorker::run()
+void MyEventMultiplexor::run()
 {
 	eventLoop();
 }
 
-int MyEventWorker::eventLoop()
+int MyEventMultiplexor::eventLoop()
 {
 	event_base_dispatch(m_event_base);
 	return 0;
 }
 
-void MyEventWorker::SetWorkId(int workId)
+void MyEventMultiplexor::SetWorkId(int workId)
 {
 	m_workId = workId;
 }
 
-void MyEventWorker::SetEventTimer(MyEventTimer* eventTimer)
+void MyEventMultiplexor::SetEventTimer(MyEventTimer* eventTimer)
 {
 	m_EventTimer = eventTimer;
 }
 
-const int& MyEventWorker::GetWritePipeFd()
+const int& MyEventMultiplexor::GetWritePipeFd()
 {
 	return m_work_w_fd;
 }
 
-const int& MyEventWorker::getWorkId()
+const int& MyEventMultiplexor::getWorkId()
 {
 	return m_workId;
 }
 
-void MyEventWorker::read_callback(struct bufferevent *bev, void *ctx)
+void MyEventMultiplexor::read_callback(struct bufferevent *bev, void *ctx)
 {
 	char* rBuffer;
 	struct evbuffer *wBuffer;
@@ -90,23 +90,23 @@ void MyEventWorker::read_callback(struct bufferevent *bev, void *ctx)
 	}
 
 	Client* pClient = static_cast<Client*>(ctx);
-	MyEventWorker* pEventWork = static_cast<MyEventWorker*>(pClient->event_work);
+	MyEventMultiplexor* pEventWork = static_cast<MyEventMultiplexor*>(pClient->event_work);
 	pEventWork->OnReceive(rBuffer);
 }
 
-void MyEventWorker::write_callback(struct bufferevent *bev, void *ctx)
+void MyEventMultiplexor::write_callback(struct bufferevent *bev, void *ctx)
 {
 
 }
 
-void MyEventWorker::error_callback(struct bufferevent *bev, short what, void *ctx)
+void MyEventMultiplexor::error_callback(struct bufferevent *bev, short what, void *ctx)
 {
 	struct Client *client = (struct Client*)ctx;
-	auto pEventWorker = static_cast<MyEventWorker*>(client->event_work);
+	auto pEventWorker = static_cast<MyEventMultiplexor*>(client->event_work);
 	pEventWorker->delClient(client);
 }
 
-void MyEventWorker::pip_callback(evutil_socket_t fd, short what, void *ctx)
+void MyEventMultiplexor::pip_callback(evutil_socket_t fd, short what, void *ctx)
 {
 	void* buf[1];
 	if (read(fd, buf, sizeof(void*)) != sizeof(void*)) {
@@ -114,11 +114,11 @@ void MyEventWorker::pip_callback(evutil_socket_t fd, short what, void *ctx)
 		return;
 	}
 
-	MyEventWorker* pThisObject = static_cast<MyEventWorker*>(ctx);
+	MyEventMultiplexor* pThisObject = static_cast<MyEventMultiplexor*>(ctx);
 	pThisObject->addClient(static_cast<Client*>(buf[0]));
 }
 
-void MyEventWorker::addEvent(Client* pClient)
+void MyEventMultiplexor::addEvent(Client* pClient)
 {
 	m_buf[0] = pClient;
 	if (write(GetWritePipeFd(), m_buf, sizeof(void*)) != sizeof(void*)) {
@@ -127,10 +127,10 @@ void MyEventWorker::addEvent(Client* pClient)
 	}
 }
 
-void MyEventWorker::addClient(Client* pClient)
+void MyEventMultiplexor::addClient(Client* pClient)
 {
 	pClient->buf_ev = bufferevent_socket_new(m_event_base, pClient->fd, BEV_OPT_CLOSE_ON_FREE);
-	bufferevent_setcb(pClient->buf_ev, MyEventWorker::read_callback, MyEventWorker::write_callback, MyEventWorker::error_callback, pClient);
+	bufferevent_setcb(pClient->buf_ev, MyEventMultiplexor::read_callback, MyEventMultiplexor::write_callback, MyEventMultiplexor::error_callback, pClient);
 	bufferevent_enable(pClient->buf_ev, EV_READ);
 
 	std::cout << "Event work thread " << getWorkId() << " add connect " << pClient->ipAddr << " : " << pClient->port << std::endl;
@@ -138,7 +138,7 @@ void MyEventWorker::addClient(Client* pClient)
 	std::cout << getWorkId() << " m_ConnectClientTable Add " << m_ConnectClientTable.size() << std::endl;
 }
 
-void MyEventWorker::delClient(Client* pClient)
+void MyEventMultiplexor::delClient(Client* pClient)
 {
 	m_ConnectClientTable.erase(pClient->fd);
 	std::cout << getWorkId() << " m_ConnectClientTable Del " << m_ConnectClientTable.size() << std::endl;
@@ -147,7 +147,7 @@ void MyEventWorker::delClient(Client* pClient)
 	delete pClient;
 }
 
-void MyEventWorker::OnReceive(char* rBuffer)
+void MyEventMultiplexor::OnReceive(char* rBuffer)
 {
 	if (strcmp(rBuffer, "stop") == 0)
 	{
@@ -182,12 +182,12 @@ void MyEventWorker::OnReceive(char* rBuffer)
 	cout << rBuffer << endl;
 }
 
-void MyEventWorker::OnSend()
+void MyEventMultiplexor::OnSend()
 {
 
 }
 
-void MyEventWorker::OnError()
+void MyEventMultiplexor::OnError()
 {
 
 }
