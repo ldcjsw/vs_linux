@@ -34,6 +34,16 @@ void MyEventTimer::MyEventInit()
 	}
 }
 
+void MyEventTimer::StopEventLoop()
+{
+	cout << "MyEventTimer::StopEventLoop()" << endl;
+	timeval tv;
+	tv.tv_sec = 5;
+	tv.tv_usec = 0;
+	event_base_loopexit(m_event_base, &tv);
+	//event_base_loopbreak(m_event_base);
+}
+
 const int& MyEventTimer::GetWritePipeFd()
 {
 	return m_time_w_fd;

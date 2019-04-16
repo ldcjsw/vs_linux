@@ -34,6 +34,7 @@ void testEvent()
 	auto pTimeEvent = new MyEventTimer();
 	pTimeEvent->MyEventInit();
 	pTimeEvent->start();
+	pTimeEvent->SetJoinAble(true);
 
 	vector<MyEventMultiplexor*> m_works;
 	for (int i = 0; i < 2; i++)
@@ -41,6 +42,7 @@ void testEvent()
 		auto pWorker = new MyEventMultiplexor();
 		pWorker->SetWorkId(i);
 		pWorker->SetEventTimer(pTimeEvent);
+		pWorker->SetJoinAble(true);
 		m_works.push_back(pWorker);
 	}
 
@@ -52,6 +54,7 @@ void testEvent()
 
 	auto pAcceptor = new MyEventAcceptor();
 	pAcceptor->SetEventWorks(m_works);
+	pAcceptor->SetEventTimer(pTimeEvent);
 	pAcceptor->MyEventInit();
 	if (pAcceptor->Joinbale() == false)
 	{
@@ -60,6 +63,8 @@ void testEvent()
 	pAcceptor->start();
 
 	pAcceptor->Join();
+
+	cout << "server stop successful." << endl;
 }
 
 int main(int argc, char** argv)

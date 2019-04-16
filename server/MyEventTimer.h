@@ -12,8 +12,7 @@
 #include <iostream>
 #include <unordered_map>
 #include "MyThread.h"
-
-using std::unordered_map;
+#include "share.h"
 
 namespace GG {
 
@@ -60,6 +59,7 @@ namespace GG {
 		const int& GetWritePipeFd();
 		void AddEvent(TimerInfo*);
 		static void OnTime(int sock, short event, void *arg);
+		void StopEventLoop();
 
 	protected:
 		virtual void run();

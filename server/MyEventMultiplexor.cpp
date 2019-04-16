@@ -51,6 +51,16 @@ int MyEventMultiplexor::eventLoop()
 	return 0;
 }
 
+void MyEventMultiplexor::StopEventLoop()
+{
+	cout << "MyEventMultiplexor::StopEventLoop() " << getWorkId() << endl;
+	timeval tv;
+	tv.tv_sec = 5;
+	tv.tv_usec = 0;
+	event_base_loopexit(m_event_base, &tv);
+	//event_base_loopbreak(m_event_base);
+}
+
 void MyEventMultiplexor::SetWorkId(int workId)
 {
 	m_workId = workId;
@@ -75,8 +85,9 @@ void MyEventMultiplexor::read_callback(struct bufferevent *bev, void *ctx)
 {
 	char* rBuffer;
 	struct evbuffer *wBuffer;
+	size_t readSize = 0;
 
-	rBuffer = evbuffer_readline(bev->input);
+	rBuffer = evbuffer_readln(bev->input, &readSize, EVBUFFER_EOL_LF);
 	if (rBuffer == NULL)
 	{
 		return;
@@ -180,6 +191,8 @@ void MyEventMultiplexor::OnReceive(char* rBuffer)
 		GetEventTimer()->AddEvent(pTimerInfo);
 	}
 	cout << rBuffer << endl;
+
+	//delete rBuffer;
 }
 
 void MyEventMultiplexor::OnSend()

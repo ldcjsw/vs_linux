@@ -27,22 +27,30 @@ int MyEventAcceptor::MyEventInit()
 	event_assign(&m_accept_event, m_event_base, m_socket_listen, EV_READ | EV_PERSIST, MyEventAcceptor::accept_callback, this);
 	event_add(&m_accept_event, NULL);
 
+	event_assign(&m_signal_event, m_event_base, SIGINT, EV_SIGNAL | EV_PERSIST, signall_callback, this);
+	event_add(&m_signal_event, NULL);
+
 	return 0;
 }
 
-void MyEventAcceptor::SetEventWorks(vector<MyEventMultiplexor*> works)
+void MyEventAcceptor::SetEventWorks(vector<MyEventMultiplexor*> pMyEventMultiplexor)
 {
-	m_works = works;
+	m_EventMultiplexor = pMyEventMultiplexor;
+}
+
+void MyEventAcceptor::SetEventTimer(MyEventTimer* pMyEventTimer)
+{
+	m_EventTimer = pMyEventTimer;
 }
 
 MyEventMultiplexor* MyEventAcceptor::getOneEventWork()
 {
-	if (m_worksLoopFlag >= m_works.size())
+	if (m_worksLoopFlag >= m_EventMultiplexor.size())
 	{
 		m_worksLoopFlag = 0;
 	}
 
-	return m_works[m_worksLoopFlag++];
+	return m_EventMultiplexor[m_worksLoopFlag++];
 }
 
 void MyEventAcceptor::run()
@@ -113,6 +121,37 @@ void MyEventAcceptor::accept_callback(int fd, short ev, void *arg)
 
 	auto pAcceptor = static_cast<MyEventAcceptor*>(arg);
 	pAcceptor->setClientSocket();
+}
+
+void MyEventAcceptor::signall_callback(int fd, short event, void *arg)
+{
+	auto pEventAcceptor = static_cast<MyEventAcceptor*> (arg);
+	pEventAcceptor->StopServer();
+ }
+
+void MyEventAcceptor::StopServer()
+{
+	cout << __FUNCTION__ << endl;
+	for (auto it : m_EventMultiplexor)
+	{
+		it->StopEventLoop();
+	}
+
+	m_EventTimer->StopEventLoop();
+
+	StopEventLoop();
+}
+
+void MyEventAcceptor::StopEventLoop()
+{
+	cout << "MyEventAcceptor::StopEventLoop()" << endl;
+	event_del(&m_accept_event);
+	event_del(&m_signal_event);
+	timeval tv;
+	tv.tv_sec = 5;
+	tv.tv_usec = 0;
+	event_base_loopexit(m_event_base, &tv);
+	//event_base_loopbreak(m_event_base);
 }
 
 int MyEventAcceptor::setClientSocket()

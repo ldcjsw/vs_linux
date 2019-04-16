@@ -95,13 +95,13 @@
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <LibraryDependencies>pthread;protobuf;mysqlclient;z;m;dl;ssl;crypto;event</LibraryDependencies>
+      <LibraryDependencies>pthread;mysqlclient;z;m;dl;ssl;crypto;event</LibraryDependencies>
       <AdditionalLibraryDirectories>lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Link>
-      <LibraryDependencies>pthread;protobuf;mysqlclient;z;m;dl;ssl;crypto;event</LibraryDependencies>
+      <LibraryDependencies>pthread;mysqlclient;z;m;dl;ssl;crypto;event</LibraryDependencies>
       <AdditionalLibraryDirectories>lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

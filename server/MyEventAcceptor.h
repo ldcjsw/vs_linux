@@ -9,13 +9,12 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <signal.h>
 #include <iostream>
 
 #include "MyThread.h"
 #include "MyEventMultiplexor.h"
 #include <vector>
-
-using std::vector;
 
 namespace GG {
 	class MyEventAcceptor :
@@ -27,6 +26,9 @@ namespace GG {
 
 		int MyEventInit();
 		void SetEventWorks(vector<MyEventMultiplexor*>);
+		void SetEventTimer(MyEventTimer*);
+		void StopServer();
+		void StopEventLoop();
 
 	protected:
 		virtual void run();
@@ -38,12 +40,15 @@ namespace GG {
 		int eventLoop();
 		MyEventMultiplexor* getOneEventWork();
 		static void accept_callback(int fd, short ev, void *arg);
+		static void signall_callback(int fd, short event, void *arg);
 
 	private:
 		struct event_base* m_event_base;
 		struct event m_accept_event;
+		struct event m_signal_event;
 		int m_socket_listen;
-		vector<MyEventMultiplexor*> m_works;
+		vector<MyEventMultiplexor*> m_EventMultiplexor;
+		MyEventTimer* m_EventTimer;
 		size_t m_worksLoopFlag;
 	};
 }

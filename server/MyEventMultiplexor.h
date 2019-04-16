@@ -16,9 +16,6 @@
 #include <list>
 #include <unordered_map>
 
-using std::list;
-using std::unordered_map;
-
 namespace GG {
 	class MyEventMultiplexor :
 		public MyThread
@@ -31,6 +28,7 @@ namespace GG {
 		void addEvent(Client* pClient);
 		void SetWorkId(int workId);
 		void SetEventTimer(MyEventTimer* eventTimer);
+		void StopEventLoop();
 		
 		MyEventTimer* GetEventTimer() { return m_EventTimer; }
 		const int& GetWritePipeFd();
