@@ -96,6 +96,9 @@ int MyEventAcceptor::acceptorSocketInit()
 	}
 
 	setsockopt(m_socket_listen, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
+	if (setsockopt(m_socket_listen, SOL_SOCKET, SO_REUSEPORT, &reuse, sizeof(reuse)) < 0) {
+		perror("setsockopt()");
+	}
 	setnonblock(m_socket_listen);
 
 	return 0;
@@ -112,7 +115,7 @@ int MyEventAcceptor::setnonblock(int fd)
 	return 0;
 }
 
-void MyEventAcceptor::accept_callback(int fd, short ev, void *arg)
+void MyEventAcceptor::accept_callback(evutil_socket_t fd, short events, void *arg)
 {
 	if (arg == nullptr)
 	{
@@ -151,7 +154,6 @@ void MyEventAcceptor::StopEventLoop()
 	tv.tv_sec = 5;
 	tv.tv_usec = 0;
 	event_base_loopexit(m_event_base, &tv);
-	//event_base_loopbreak(m_event_base);
 }
 
 int MyEventAcceptor::setClientSocket()

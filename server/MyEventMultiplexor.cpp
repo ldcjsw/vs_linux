@@ -5,6 +5,8 @@ using namespace GG;
 using std::cout;
 using std::endl;
 
+#define TEST_BUMS 1024
+
 MyEventMultiplexor::MyEventMultiplexor()
 {
 }
@@ -83,31 +85,17 @@ const int& MyEventMultiplexor::getWorkId()
 
 void MyEventMultiplexor::read_callback(struct bufferevent *bev, void *ctx)
 {
-	char* rBuffer;
-	struct evbuffer *wBuffer;
-	size_t readSize = 0;
-
-	rBuffer = evbuffer_readln(bev->input, &readSize, EVBUFFER_EOL_LF);
-	if (rBuffer == NULL)
-	{
-		return;
-	}
-
-	wBuffer = evbuffer_new();
-	if (wBuffer != NULL) {
-		evbuffer_add_printf(wBuffer, "%s\n", rBuffer);
-		bufferevent_write_buffer(bev, wBuffer);
-		evbuffer_free(wBuffer);
-	}
 
 	Client* pClient = static_cast<Client*>(ctx);
 	MyEventMultiplexor* pEventWork = static_cast<MyEventMultiplexor*>(pClient->event_work);
-	pEventWork->OnReceive(rBuffer);
+	pEventWork->OnReceive(pClient);
 }
 
 void MyEventMultiplexor::write_callback(struct bufferevent *bev, void *ctx)
 {
-
+	Client* pClient = static_cast<Client*>(ctx);
+	MyEventMultiplexor* pEventWork = static_cast<MyEventMultiplexor*>(pClient->event_work);
+	pEventWork->OnSend();
 }
 
 void MyEventMultiplexor::error_callback(struct bufferevent *bev, short what, void *ctx)
@@ -132,6 +120,7 @@ void MyEventMultiplexor::pip_callback(evutil_socket_t fd, short what, void *ctx)
 void MyEventMultiplexor::addEvent(Client* pClient)
 {
 	m_buf[0] = pClient;
+
 	if (write(GetWritePipeFd(), m_buf, sizeof(void*)) != sizeof(void*)) {
 		perror("Writing to thread notify pipe");
 		return;
@@ -154,50 +143,33 @@ void MyEventMultiplexor::delClient(Client* pClient)
 	m_ConnectClientTable.erase(pClient->fd);
 	std::cout << getWorkId() << " m_ConnectClientTable Del " << m_ConnectClientTable.size() << std::endl;
 	bufferevent_free(pClient->buf_ev);
-	close(pClient->fd);
 	delete pClient;
 }
 
-void MyEventMultiplexor::OnReceive(char* rBuffer)
+void MyEventMultiplexor::OnReceive(Client* pClient)
 {
-	if (strcmp(rBuffer, "stop") == 0)
-	{
-		exit(-1);
-	}
-	else if (strcmp(rBuffer, "add") == 0)
-	{
-		auto pTimerInfo = new TimerInfo();
-		pTimerInfo->type = TET_ADD;
-		pTimerInfo->id = TI_TEST;
-		pTimerInfo->loopCounts = 12;
-		pTimerInfo->tv.tv_sec = 1;
-		pTimerInfo->tv.tv_usec = 0;
-		pTimerInfo->cb = MyEventTimer::OnTime;
-		pTimerInfo->eventTimer = GetEventTimer();
 
-		GetEventTimer()->AddEvent(pTimerInfo);
-	}
-	else  if (strcmp(rBuffer, "del") == 0)
-	{
-		auto pTimerInfo = new TimerInfo();
-		pTimerInfo->type = TET_DEL;
-		pTimerInfo->id = TI_TEST;
-		pTimerInfo->loopCounts = 0;
-		pTimerInfo->tv.tv_sec = 0;
-		pTimerInfo->tv.tv_usec = 0;
-		pTimerInfo->cb = nullptr;
-		pTimerInfo->eventTimer = GetEventTimer();
+	struct evbuffer *input = bufferevent_get_input(pClient->buf_ev);
+	struct evbuffer *output = bufferevent_get_output(pClient->buf_ev);
 
-		GetEventTimer()->AddEvent(pTimerInfo);
-	}
-	cout << rBuffer << endl;
+	evbuffer_add_buffer(output, input);
 
-	//delete rBuffer;
+	/*size_t datalen = 0;
+	evbuffer_remove(input, &datalen, sizeof(datalen));
+	void* buf = new char[datalen];
+	evbuffer_remove(input, buf, datalen);
+
+	auto pData = static_cast<MyStruct*>(buf);
+	cout << pData->a << endl;
+	cout << pData->b << endl;
+
+	evbuffer_add(output, buf, datalen);
+
+	delete buf;*/
 }
 
 void MyEventMultiplexor::OnSend()
 {
-
 }
 
 void MyEventMultiplexor::OnError()

@@ -7,24 +7,14 @@ using namespace GG;
 
 int main()
 {
-	vector<MyClient*> clientArray;
-	for (auto i = 0; i < 3; i++)
-	{
-		auto pClient = new MyClient();
-		clientArray.push_back(pClient);
-	}
+	auto pClient = new MyClient();
 
-	for (auto it : clientArray)
-	{
-		it->start();
-	}
+	pClient->start();
 
-	sleep(5);
+	pClient->join();
+	
 
-	for (size_t i = 0; i < clientArray.size(); i++)
-	{
-		delete clientArray[i];
-	}
+	delete pClient;
 
 	return 0;
 }

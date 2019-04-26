@@ -12,7 +12,7 @@
 #include <iostream>
 
 #define HOST "localhost"  
-#define PORT 8080  
+#define PORT 9527  
 #define MAXDATASIZE 100
 
 ServerConntrol::ServerConntrol()

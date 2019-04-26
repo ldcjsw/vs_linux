@@ -49,7 +49,7 @@ namespace GG {
 		static void error_callback(struct bufferevent *bev, short what, void *ctx);
 
 	public:
-		void OnReceive(char* rBuffer);
+		void OnReceive(Client*);
 		void OnSend();
 		void OnError();
 

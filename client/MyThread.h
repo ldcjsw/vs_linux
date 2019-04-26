@@ -9,7 +9,7 @@ namespace GG {
 	class MyThread
 	{
 	public:
-		MyThread(bool joinable = false);
+		MyThread(bool joinable = true);
 		~MyThread();
 
 	public:

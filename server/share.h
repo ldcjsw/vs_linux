@@ -19,3 +19,23 @@ struct Client
 	char ipAddr[20];
 	void* event_work;
 };
+
+struct MyStruct
+{
+	int a = 0;
+	int b = 1;
+};
+
+struct NetData
+{
+	size_t datalen;
+	void* data;
+	NetData() {
+		datalen = 0;
+		data = nullptr;
+	};
+
+	~NetData() {
+		delete data;
+	}
+};
